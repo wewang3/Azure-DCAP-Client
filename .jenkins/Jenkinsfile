@@ -140,7 +140,7 @@ def DCAPBuildTest(String label, String build_type) {
 
 try {
 
-    cleanWs()
+    
     checkout scm
 				
     def dcap = load pwd() + "/.jenkins/src/Dcap.groovy"
