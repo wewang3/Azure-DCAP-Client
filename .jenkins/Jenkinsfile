@@ -140,7 +140,7 @@ def DCAPBuildTest(String label, String build_type) {
 
 try {
 				
-    def dcap = load pwd() + "/.jenkins/src/Dcap.groovy"
+    def dcap = "./src/Dcap.groovy"
 
     dcap.emailJobStatus('STARTED')
 	
