@@ -4,6 +4,7 @@ GLOBAL_TIMEOUT = 240
 
 DOCKER_REGISTRY = "dcapdockerciregistry.azurecr.io"
 
+GLOBAL_ERROR = null
 
 // Tests running on hardware with custom path to libdcap_quoteprov.so
 def ACCTest(String label, String version, String compiler, String build_type) {
@@ -137,6 +138,8 @@ def DCAPBuildTest(String label, String build_type) {
     }
 }
 
+try {
+
 parallel "ACC1604 SGX1-FLC Container RelWithDebInfo" : { ACCContainerTest('ACC-1604', '16.04') },
          "ACC1804 SGX1-FLC Container RelWithDebInfo" : { ACCContainerTest('ACC-1804', '18.04') },
          "ACC1604 SGX1-FLC clang-7 Debug" :            { ACCTest('ACC-1604', '16.04', 'clang-7', 'Debug') },
@@ -157,3 +160,13 @@ parallel "ACC1604 SGX1-FLC Container RelWithDebInfo" : { ACCContainerTest('ACC-1
          "ACCWin 2016 DCAP Release Test" :             { DCAPBuildTest('SGXFLC-Windows-2016-DCAP', 'Release') },
          "ACCWin 2019 DCAP Debug Test" :               { DCAPBuildTest('SGXFLC-Windows-2019-DCAP', 'Debug') },
          "ACCWin 2019 DCAP Release Test" :             { DCAPBuildTest('SGXFLC-Windows-2019-DCAP', 'Release') }
+		 
+} catch(Exception e) {
+    println "Caught global pipeline exception :" + e
+    GLOBAL_ERROR = e
+    throw e
+} finally {
+    currentBuild.result = (GLOBAL_ERROR != null) ? 'FAILURE' : "SUCCESS"
+    dcap.emailJobStatus(currentBuild.result)
+}
+
