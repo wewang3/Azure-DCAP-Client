@@ -139,10 +139,6 @@ def DCAPBuildTest(String label, String build_type) {
 }
 
 try {
-				
-    def dcap = "./src/Dcap.groovy"
-
-    dcap.emailJobStatus('STARTED')
 	
 	stage("Trigger pipelines") {
 
